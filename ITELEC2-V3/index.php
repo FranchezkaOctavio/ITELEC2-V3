@@ -1,5 +1,9 @@
 <?php
     include_once 'config/setting-configuration.php';
+    if(isset($_SESSION ['adminSession'])){
+        echo "<script>alert('User is logged in!'); window.location.href = 'dashboard/admin';</script>";
+        exit;
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -14,7 +18,8 @@
 <body>
     <div class="main">
         <input type="checkbox" id="chk" aria-hidden="true">
-        <h1>SIGN IN</h1>
+       
+        <h1>...</h1>
         <div class="signin">
             <form action="dashboard/admin/authentication/admin.class.php" method="POST">
                  <label for="chk" aria-hidden="true">Sign in</label>
@@ -23,7 +28,7 @@
                  <input type="password" name="password" placeholder="Enter Password" required> <br>
                  <button type="submit" name="btn-signin">SIGN IN</button>
             </form>
-        </div>
+        </div>  
  
 
         <h1> REGISTRATION</h1>
@@ -35,7 +40,7 @@
              <input type="email" name="email" placeholder="Enter email" required> <br>
              <input type="password" name="password" placeholder="Enter Password" required> <br>
              <button type="submit" name="btn-signup">SIGN UP</button>
-         </form>
+            </form>
 
         </div>
        
