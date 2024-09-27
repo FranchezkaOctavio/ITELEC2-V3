@@ -4,7 +4,7 @@ require_once 'authentication/admin.class.php';
 $admin = new ADMIN();
 if(!$admin->isUserLoggedIn())
 {
-    echo "<script>alert('walang naka log in!'); window.location.href = '../../';</script>";
+    echo "<script>alert('No Log in Account!'); window.location.href = '../../';</script>";
     exit;   
 }
 $stmt = $admin->runQuery("SELECT * FROM user WHERE id = :id");

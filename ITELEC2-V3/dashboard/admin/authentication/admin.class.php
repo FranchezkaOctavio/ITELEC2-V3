@@ -53,15 +53,7 @@ class ADMIN
                             background-color; #f5f5f5;
                             margin: 0;
                             padding: 0;
-                        } 
-                        .container {
-                            max-width: 600px;
-                            margin: 0 auto;
-                            padding: 30px;
-                            background-color: #ffffff;
-                            border-radius: 4px;
-                            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                        }
+                        }  
                         h1 {
                             color: #333333;
                             font-size: 24px;
@@ -90,19 +82,16 @@ class ADMIN
                     </style>
                 </head>
                 </body>
-                    <div> class='container'>
-                        div class='logo'>
-                            <img src='cid:logo' alt='Logo' width='150'>
-                        </div>
-                        <h1>OTP Verification</h1>
-                        <p>Hello, $email</p>
-                        <p>Your OTP is: $otp</p>
-                        <p>if you didn't request an OTP, please ignore  this email.</p>
-                        <p>Thank you!</p>
-                    </div>
+                <div>
+                     <h1>OTP Verification</h1>
+                     <p>Hello, $email</p>
+                     <p>Your OTP is: $otp</p>
+                     <p>if you didn't request an OTP, please ignore  this email.</p>
+                     <p>Thank you!</p>
+                </div>
                 </body>
                 </html>";
-                $this->send_email($email, $message, $subject, $this->smtp_email, $this->smtp_password);
+                $this->sendEmail($email, $message, $subject, $this->smtp_email, $this->smtp_password);
                 echo "<script>alert('We sent the OTP $email'); window.location.href = '../../../verify-otp.php';</script>";
             }
         }
@@ -112,8 +101,6 @@ class ADMIN
     public function verifyOTP($username, $email, $password, $tokencode, $otp, $csrf_token){
         if($otp == $_SESSION['OTP']){
             unset($_SESSION['OTP']);
-
-            $this->addAdmin($csrf_token, $username, $email, $password);
             
             $subject = " VERIFICATION SUCCESS";
             $message = "
@@ -129,14 +116,7 @@ class ADMIN
                         margin: 0;
                         padding: 0;
                     } 
-                    .container {
-                        max-width: 600px;
-                        margin: 0 auto;
-                        padding: 30px;
-                        background-color: #ffffff;
-                        border-radius: 4px;
-                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                    }
+                   }
                     h1 {
                         color: #333333;
                         font-size: 24px;
@@ -165,27 +145,27 @@ class ADMIN
                 </style>
             </head>
             </body>
-                <div> class='container'>
-                  <div class='logo'>
-                  <img src='cid:logo' alt='logo' width='150'>
-                  </div>
-                  <h1>Welcome</h1>
+                <div>
+                    <h1>Welcome</h1>
                   <p>Hello, <strong>$email</strong></p>
-                  <p>Welcome to Chezka System</p>
+                  <p>Welcome to Aquino - Octavio System. </p>
                   <p>If you did not sign up for an account, you can safely ignore this email.</p>
                   <P>Thank you!</p>
                 </div>
             </body>
             </html>";
 
-            $this->send_email($email, $message, $subject, $this->smtp_email, $this->smtp_password);
-            echo "<script>alert('Thank You'); window.location.href = '../../../';</script>";
+            $this->sendEmail($email, $message, $subject, $this->smtp_email, $this->smtp_password);
+            echo "<script>alert('Verification Success.'); window.location.href = '../../../';</script>";
 
             unset($_SESSION['not_verify_username']);
             unset($_SESSION['not_verify_email']);
             unset($_SESSION['not_verify_password']);
+
+            $this->addAdmin(csrf_token: $csrf_token, username: $username, email: $email, password: $password);
+
         }else if($otp == NULL){
-            echo "<script>alert('Email Already Exists.'); window.location.href = '../../../verify-otp.php';</script>";
+            echo "<script>alert('No OTP Found.'); window.location.href = '../../../verify-otp.php';</script>";
             exit;
         }else{
             echo "<script>alert('It appears that the OTP you entered is invalid.'); window.location.href = '../../../verify-otp.php';</script>";
@@ -193,14 +173,13 @@ class ADMIN
         }
     }
 
-
     public function addAdmin($csrf_token, $username, $email, $password)
     {
         $stmt = $this->runQuery("SELECT * FROM user WHERE email = :email");
         $stmt->execute(array(":email" => $email));
 
         if($stmt->rowcount() > 0){
-            echo "<script>alert('No OTP Found.'); window.location.href = '../../../';</script>";
+            echo "<script>alert('Email Already Exists.'); window.location.href = '../../../';</script>";
             exit;
         }
 
@@ -292,10 +271,10 @@ class ADMIN
         exit;
     }
 
-    function send_email($email, $message, $subject, $smtp_email, $smtp_password){
+    public function sendEmail($email, $message, $subject, $smtp_email, $smtp_password){
         $mail = new PHPMailer();
         $mail->isSMTP();
-        $mail->SMTPDebug = 2;
+        $mail->SMTPDebug = 0;
         $mail->SMTPAuth = true;
         $mail->SMTPSecure = "tls";
         $mail->Host = "smtp.gmail.com";
@@ -303,10 +282,10 @@ class ADMIN
         $mail->addAddress($email);
         $mail->Username = $smtp_email;
         $mail->Password = $smtp_password;
-        $mail->setFrom($smtp_email, "Chezka");
+        $mail->setFrom($smtp_email, "Aquino - Octavio");
         $mail->Subject =$subject;
         $mail->msgHTML($message);
-        $mail->Send();
+        $mail->send();
     }
     public function logs($activity, $user_id)
     {
